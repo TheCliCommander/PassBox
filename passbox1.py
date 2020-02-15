@@ -16,7 +16,7 @@ def get_pass_length():
 	print(password)
 	pyperclip.copy(password)
 	print('Password copied to clipboard')
-
+	return password
 def create_and_store_pwsd():
 	password = get_pass_length()
 	name = str(input("Enter name for password: "))
@@ -32,8 +32,9 @@ def create_and_store_pwsd():
 							name TEXT,
 							pswd TEXT
 							)""")
-	#c.execute("DELETE FROM password_table")
+	c.execute("DELETE FROM password_table")
 	c.execute("INSERT INTO password_table (name, pswd) VALUES (?, ?)", (name, password))
+	print(str(password) + 'copied to clipboard')
 
 	#COMMIT CHANGES
 	conn.commit()
