@@ -3,7 +3,7 @@ import secrets
 import string
 import sqlite3
 import pyperclip
-import optparse
+import argparse
 
 #CREATE PASSWORD OF GIVEN LENGTH
 def get_pass(length):
@@ -59,24 +59,27 @@ def input_name_and_query():
 	name = input('Name of password you wish to query: ')
 	query_pswd_by_name(name)
 
-create_and_store_pwsd()
+# create_and_store_pwsd()
 
-input_name_and_query()
+# input_name_and_query()
 
-# def main():
-# 	"""Runs program and handles command line options"""
+def main():
+	"""Runs program and handles command line options"""
 	
-# 	parser = argparse.ArgumentParser()
-# 	group = parser.add_mutually_exclusive_group()
-# 	group.add_argument("-n", "--new", action="store_const", const=get_pass(arg.length))
-# 	group.add_argument("-q", "--query", action="store_const", const=query_pswd_by_name(arg.name))
-# 	parser.add_argument("name", help="The name of the password you wish to query.", type=str)
-# 	parser.add_argument("length", , help="The desired length of password.",\
-# 								type=int)
+	parser = argparse.ArgumentParser()
+	group = parser.add_mutually_exclusive_group()
+	group.add_argument("-n", "--new", action="store_true")
+	group.add_argument("-q", "--query", action="store_true")
 
-# 	args = parser.parse_args()
-
-	
+	args = parser.parse_args()
+	if args.new:
+		create_and_store_pwsd()
+	elif args.query:
+		input_name_and_query()
+	else:
+		print_help()
+if __name__ == '__main__':
+	main()	
 
 
 
