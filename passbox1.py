@@ -68,16 +68,16 @@ def main():
 
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("-n", "--new", action="store_true", help=" when adding new password")
-    group.add_argument("-q", "--query", action="store_true", help="When querry for the password")
+    group.add_argument("-n", "--new", action="store_true", help=" to create a new password")
+    group.add_argument("-q", "--query", action="store_true", help="to query an existing password")
 
     args = parser.parse_args()
     if args.new:
         create_and_store_pwsd()
     elif args.query:
         input_name_and_query()
-#	else:
-#		print_help()
+    else:
+       print("Please select an option: [-h | -q] or [-h] for help")
 if __name__ == '__main__':
     main()
 
