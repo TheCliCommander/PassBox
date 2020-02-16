@@ -86,11 +86,35 @@ def remove_entry():
     if (name,) not in result:
         print("Error: "+name+ " does not exist!")
     else:
-        delete_pswd = "DELETE FROM password_table WHERE name = ?"
-        c.execute(delete_pswd, (name,))
-        print('Password for '+ name +' removed')
+        confirm = str(input(("Are you sure you want to delete your "+name+" password? [Y/N]: ")))
+        if confirm == "N":
+            print(name+ " NOT deleted.")
+        if confirm == "Y":
+            delete_pswd = "DELETE FROM password_table WHERE name = ?"
+            c.execute(delete_pswd, (name,))
+            print('Password for '+ name +' removed')
+        else:
+            print("Please choose either [Y] or [N], case sensitive")
     conn.commit()
     conn.close()
+
+def empty_passbox():
+    confirm = str(input("Are you sure you want to delete all your passwords? [Y/N]: "))
+    conn = sqlite3.connect('managerDB.db')
+    c = conn.cursor()
+    delete_all = "DELETE FROM password_table"
+    # print(confirm)
+    if confirm == "N":
+        print("Whew, that was close!")
+    elif confirm == "Y":
+        c.execute(delete_all)
+        print("Passbox has been permanently emptied!")
+    else:
+        print("Please choose [Y] or [N], case sensitive")
+    conn.commit()
+    conn.close()
+
+
 
 def main():
     """Runs program and handles command line options"""
@@ -100,6 +124,7 @@ def main():
     group.add_argument("-n", "--new", action="store_true", help="create a new password")
     group.add_argument("-q", "--query", action="store_true", help="query an existing password")
     group.add_argument("-r", "--remove", action="store_true", help="remove an existing password")
+    group.add_argument("-e", "--empty", action="store_true", help="delete all passwords")
     args = parser.parse_args()
     if args.new:
         create_and_store_pwsd()
@@ -107,8 +132,10 @@ def main():
         input_name_and_query()
     elif args.remove:
         remove_entry()
+    elif args.empty:
+        empty_passbox()
     else:
-       print("Please select an option: [-n | -q | -r] or [-h] for help")
+       print("Please select an option. [-h] for help and list of options")
 if __name__ == '__main__':
     main()
 
