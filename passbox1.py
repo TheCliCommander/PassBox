@@ -89,7 +89,7 @@ def remove_entry():
         delete_pswd = "DELETE FROM password_table WHERE name = ?"
         c.execute(delete_pswd, (name,))
         print('Password for '+ name +' removed')
-        conn.commit()
+    conn.commit()
     conn.close()
 
 def main():
