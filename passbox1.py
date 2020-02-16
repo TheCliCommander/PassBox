@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import random
 import secrets
@@ -22,7 +22,7 @@ def get_pass_length():
 def create_and_store_pwsd():
     password = get_pass_length()
     name = str(input("Enter name for password: "))
-    print('Password for ' + name + ' copied to clipboard')
+    
     #CREATE DATABASE CONNECTION
     conn = sqlite3.connect('managerDB.db') #DEFER INIT OF DATABASE.
 
@@ -34,9 +34,14 @@ def create_and_store_pwsd():
                             name TEXT,
                             pswd TEXT
                             )""")
-   
-    c.execute("INSERT INTO password_table (name, pswd) VALUES (?, ?)", (name, password))
-    
+    gather_names = "SELECT name FROM password_table WHERE name = ?"
+    c.execute(gather_names,(name,))
+    result = c.fetchall()
+    if (name,) in result:
+        print("Error: Password for " + name +" already exists!\nRemove with [-r] or choose another name.")
+    else:  
+        c.execute("INSERT INTO password_table (name, pswd) VALUES (?, ?)", (name, password))
+        print('Password for ' + name + ' saved and copied to clipboard')
 
     #COMMIT CHANGES
     conn.commit()
@@ -58,18 +63,33 @@ def query_pswd_by_name(name):
     conn.close()
 
 def input_name_and_query():
+    conn = sqlite3.connect('managerDB.db')
+    c = conn.cursor()
+    gather_names = "SELECT name FROM password_table WHERE name= ?"
     name = input('Name of password you wish to query: ')
-    query_pswd_by_name(name)
+    c.execute(gather_names,(name,))
+    result = c.fetchall()
+    
+    if (name,) in result:
+        query_pswd_by_name(name)
+    else:
+        print("Error: No password for " + name +"!")
 
 
 def remove_entry():
     name = input('Name of password you wish to remove: ')
     conn = sqlite3.connect('managerDB.db')
     c = conn.cursor()
-    delete_pswd = "DELETE FROM password_table WHERE name = ?"
-    c.execute(delete_pswd, (name,))
-    print('Password for '+ name +' removed')
-    conn.commit()
+    gather_names = "SELECT name FROM password_table Where name = ?"
+    c.execute(gather_names,(name,))
+    result = c.fetchall()
+    if (name,) not in result:
+        print("Error: "+name+ " does not exist!")
+    else:
+        delete_pswd = "DELETE FROM password_table WHERE name = ?"
+        c.execute(delete_pswd, (name,))
+        print('Password for '+ name +' removed')
+        conn.commit()
     conn.close()
 
 def main():
