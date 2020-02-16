@@ -113,7 +113,14 @@ def empty_passbox():
         print("Please choose [Y] or [N], case sensitive")
     conn.commit()
     conn.close()
-
+def list_names():
+    conn = sqlite3.connect('managerDB.db')
+    c = conn.cursor()
+    get_names = "SELECT name FROM password_table"
+    c.execute(get_names)
+    result = c.fetchall()
+    for row in result:
+        print(row[0])
 
 
 def main():
@@ -125,6 +132,7 @@ def main():
     group.add_argument("-q", "--query", action="store_true", help="query an existing password")
     group.add_argument("-r", "--remove", action="store_true", help="remove an existing password")
     group.add_argument("-e", "--empty", action="store_true", help="delete all passwords")
+    group.add_argument("-l", "--list", action="store_true", help="lists all names")
     args = parser.parse_args()
     if args.new:
         create_and_store_pwsd()
@@ -134,6 +142,8 @@ def main():
         remove_entry()
     elif args.empty:
         empty_passbox()
+    elif args.list:
+        list_names()
     else:
        print("Please select an option. [-h] for help and list of options")
 if __name__ == '__main__':
