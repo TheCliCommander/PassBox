@@ -8,6 +8,8 @@ import pyperclip
 import argparse
 import getpass
 
+
+
 #CREATE PASSWORD OF GIVEN LENGTH
 def get_pass(length):
     return "".join(secrets.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits + string.punctuation) for x in range(length))
@@ -24,7 +26,7 @@ def create_and_store_pwsd():
     name = str(input("Enter name for password: "))
     
     #CREATE DATABASE CONNECTION
-    conn = sqlite3.connect('managerDB.db') #DEFER INIT OF DATABASE.
+    conn = sqlite3.connect('managerDB.db') 
 
     #CREATE CURSOR OBJECT
     c = conn.cursor()
