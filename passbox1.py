@@ -7,7 +7,7 @@ import sqlite3
 import pyperclip
 import argparse
 import getpass
-
+from pysqlcipher3 import dbapi2 as sqlcipher
 
 
 #CREATE PASSWORD OF GIVEN LENGTH
@@ -64,6 +64,8 @@ def query_pswd_by_name(name):
     conn.commit()
     conn.close()
 
+
+
 def input_name_and_query():
     conn = sqlite3.connect('managerDB.db')
     c = conn.cursor()
@@ -77,6 +79,25 @@ def input_name_and_query():
     else:
         print("Error: No password for " + name +"!")
 
+def collect_pswd(name):
+    conn = sqlite3.connect('managerDB.db')
+    c = conn.cursor()
+    query_password = "SELECT pswd FROM password_table WHERE name = ?"
+    c.execute(query_password, (name,))
+    result = c.fetchall()
+    for row in result:
+            print(row[0])
+def view_pswd():
+    conn = sqlite3.connect('managerDB.db')
+    c = conn.cursor()
+    gather_names = "SELECT name FROM password_table WHERE name = ?"
+    name = input('Name of password you wish to view: ')
+    c.execute(gather_names,(name,))
+    result = c.fetchall()
+    if (name,) in result:
+        collect_pswd(name)
+    else:
+        print('Error: No password for ' + name +'!')
 
 def remove_entry():
     name = input('Name of password you wish to remove: ')
@@ -126,7 +147,7 @@ def list_names():
 
 
 def main():
-    """Runs program and handles command line options"""
+#Runs program and handles command line options
 
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
@@ -135,9 +156,11 @@ def main():
     group.add_argument("-r", "--remove", action="store_true", help="remove an existing password")
     group.add_argument("-e", "--empty", action="store_true", help="delete all passwords")
     group.add_argument("-l", "--list", action="store_true", help="lists all names")
+    group.add_argument("-v", "--view", action="store_true", help="displays password in terminal instead of just copying it to clipboard")
     args = parser.parse_args()
     if args.new:
         create_and_store_pwsd()
+    
     elif args.query:
         input_name_and_query()
     elif args.remove:
@@ -146,6 +169,9 @@ def main():
         empty_passbox()
     elif args.list:
         list_names()
+    elif args.view:
+        view_pswd()
+
     else:
        print("Please select an option. [-h] for help and list of options")
 if __name__ == '__main__':
